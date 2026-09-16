@@ -106,6 +106,21 @@ Destructive commands require `--yes`, so a typo can't take effect on its own.
 
 ### Web UI
 
+Screenshots (from a demo instance with placeholder data — no real
+homeserver's data is shown):
+
+<p>
+  <img src="docs/screenshots/console-home.png" alt="sekimori console home screen" width="480">
+  <img src="docs/screenshots/console-status.png" alt="sekimori status command output" width="480">
+</p>
+<p>
+  <img src="docs/screenshots/console-users.png" alt="sekimori users table" width="480">
+  <img src="docs/screenshots/console-rooms.png" alt="sekimori rooms table" width="480">
+</p>
+<p>
+  <img src="docs/screenshots/console-palette.png" alt="sekimori command palette" width="480">
+</p>
+
 ```bash
 sekimori-web        # 127.0.0.1:9099
 ```
