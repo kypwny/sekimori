@@ -19,7 +19,10 @@ import urllib.parse
 import urllib.request
 from wsgiref.simple_server import WSGIRequestHandler, make_server
 
+from bottle import Bottle
+
 from sekimori import config as config_module
+from sekimori import web as web_module
 from sekimori.client import AdminClient
 from sekimori.web import make_app
 
@@ -183,6 +186,34 @@ class AuthGateTest(unittest.TestCase):
                      "Origin": self.base},
         )
         self.assertNotIn(status, (401, 403))
+
+    def test_entrypoint_serves_the_app_it_built(self):
+        """
+        Regression: bottle.run() defaults to bottle's module-level app singleton,
+        which has none of these routes. Calling run() without app= makes every
+        request 404 even though the routes exist on the built app. Assert the
+        app handed to run() is the one carrying the routes.
+        """
+        captured = {}
+
+        def fake_run(*args, **kwargs):
+            captured["args"] = args
+            captured["kwargs"] = kwargs
+
+        original = web_module.run
+        web_module.run = fake_run
+        try:
+            web_module.main()
+        finally:
+            web_module.run = original
+
+        self.assertTrue(captured, "main() never called run()")
+        app = captured["kwargs"].get("app")
+        self.assertIsNotNone(app, "run() was called without app= — routes would 404")
+        self.assertIsInstance(app, Bottle)
+        rules = {route.rule for route in app.routes}
+        self.assertIn("/login", rules)
+        self.assertIn("/api/dashboard", rules)
 
 
 if __name__ == "__main__":

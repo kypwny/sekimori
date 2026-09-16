@@ -1003,7 +1003,10 @@ input.focus();
 
 def main():
     app, webui = make_app()
+    # Pass app explicitly: bottle.run() defaults to bottle's module-level app
+    # singleton, which has none of the routes built above and 404s everything.
     run(
+        app=app,
         host=webui.get("host", "127.0.0.1"),
         port=int(webui.get("port", 9099)),
         quiet=True,
