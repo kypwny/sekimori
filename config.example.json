@@ -1,0 +1,19 @@
+{
+  "synapse_url": "http://127.0.0.1:8008",
+  "server_name": "example.com",
+  "public_baseurl": "https://matrix.example.com",
+  "admin_token": "REPLACE_WITH_AN_ADMIN_ACCESS_TOKEN",
+  "db": {
+    "host": "localhost",
+    "name": "synapse",
+    "user": "synapse",
+    "password": ""
+  },
+  "webui": {
+    "host": "127.0.0.1",
+    "port": 9099,
+    "session_ttl": 43200
+  },
+  "webui_password_hash": "",
+  "secret_key": ""
+}

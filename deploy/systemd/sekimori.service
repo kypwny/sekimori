@@ -1,0 +1,35 @@
+[Unit]
+Description=sekimori — Matrix homeserver admin console
+Documentation=https://github.com/kypwny/sekimori
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sekimori
+Group=sekimori
+Environment=SEKIMORI_CONFIG=/etc/sekimori/config.json
+Environment=PYTHONUNBUFFERED=1
+# Adjust if installed with pipx or into a virtualenv.
+ExecStart=/usr/local/bin/sekimori-web
+Restart=on-failure
+RestartSec=3
+
+# Hardening: the console only needs to read its config, reach Synapse on
+# loopback, and exec psql. It writes nothing.
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

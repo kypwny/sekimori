@@ -1,0 +1,35 @@
+#!/sbin/openrc-run
+#
+# OpenRC service for sekimori on Alpine.
+#
+# Install:
+#   install -m 0755 deploy/openrc/sekimori /etc/init.d/sekimori
+#   addgroup -S sekimori && adduser -S -D -H -G sekimori -s /sbin/nologin sekimori
+#   rc-update add sekimori default
+#
+# Adjust `command` if you installed with pipx or into a virtualenv.
+
+description="sekimori — Matrix homeserver admin console"
+
+command="/usr/local/bin/sekimori-web"
+command_user="sekimori"
+command_group="sekimori"
+command_background="yes"
+directory="/opt/sekimori"
+
+pidfile="/run/${RC_SVCNAME}.pid"
+output_log="/var/log/sekimori/out.log"
+error_log="/var/log/sekimori/err.log"
+
+export SEKIMORI_CONFIG="/etc/sekimori/config.json"
+
+depend() {
+	need net
+	after firewall
+}
+
+start_pre() {
+	checkpath -d -m 0755 -o sekimori:sekimori /var/log/sekimori
+	checkpath -f -m 0640 -o sekimori:sekimori "${output_log}"
+	checkpath -f -m 0640 -o sekimori:sekimori "${error_log}"
+}
