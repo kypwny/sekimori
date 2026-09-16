@@ -297,8 +297,10 @@ LOGIN_PAGE = r"""<!doctype html>
 <title>{{SERVER_NAME}} — sign in</title>
 <style>
 :root{
-  --bg:#090b0c; --panel:#0e1113; --line:#20262b; --text:#d7dee5;
-  --dim:#6f7880; --faint:#3b434a; --accent:#e3b341; --bad:#ff7b72;
+  --bg:#0f1011; --panel:#151719; --line:#282b2f; --line-dark:#1d2024;
+  --text:#dcd4c7; --dim:#7e776c; --faint:#47423b;
+  --accent:#d69339; --accent-glow:rgba(214,147,57,0.18);
+  --seal:#c43b2c; --seal-glow:rgba(196,59,44,0.22); --bad:#e05244;
   --mono:"Berkeley Mono","IBM Plex Mono","JetBrains Mono","SFMono-Regular","Cascadia Code",ui-monospace,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box}
@@ -306,15 +308,36 @@ html,body{height:100%}
 body{
   margin:0; background:var(--bg); color:var(--text); font-family:var(--mono);
   font-size:13px; display:flex; align-items:center; justify-content:center;
+  background-image:
+    radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.65) 100%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 3px);
+  text-shadow:0 0 1px rgba(220,212,199,0.35);
 }
-.card{border:1px solid var(--line); background:var(--panel); padding:28px 30px; width:min(420px,92vw)}
-.sig{color:var(--accent);font-weight:700;letter-spacing:.02em;font-size:14px}
-.sub{color:var(--dim);margin:4px 0 22px}
+.card{
+  border:1px solid var(--line); background:var(--panel); padding:28px 30px;
+  width:min(440px,92vw); box-shadow:0 20px 50px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04);
+  position:relative;
+}
+.card::before{
+  content:"関守"; position:absolute; top:16px; right:20px; font-size:22px;
+  color:var(--faint); letter-spacing:0.2em; pointer-events:none; font-weight:700;
+}
+.sig{color:var(--accent);font-weight:700;letter-spacing:.02em;font-size:14px;text-shadow:0 0 10px var(--accent-glow)}
+.sub{color:var(--dim);margin:4px 0 22px;font-size:12px}
 label{display:block;color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:9px 10px;font-family:inherit;font-size:13px;outline:0}
-input:focus{border-color:var(--accent)}
-button{margin-top:18px;width:100%;background:transparent;color:var(--accent);border:1px solid var(--accent);padding:9px 10px;font-family:inherit;font-size:13px;cursor:pointer}
-button:hover{background:rgba(227,179,65,.1)}
+input{
+  width:100%; background:var(--bg); border:1px solid var(--line); color:var(--text);
+  padding:9px 10px; font-family:inherit; font-size:13px; outline:0;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,0.4);
+}
+input:focus{border-color:var(--accent);box-shadow:0 0 8px var(--accent-glow)}
+button{
+  margin-top:18px; width:100%; background:transparent; color:var(--accent);
+  border:1px solid var(--accent); padding:9px 10px; font-family:inherit;
+  font-size:13px; cursor:pointer; letter-spacing:0.04em;
+  transition:all 0.15s ease;
+}
+button:hover{background:rgba(214,147,57,0.12);box-shadow:0 0 12px var(--accent-glow)}
 .msg{color:var(--bad);margin-top:14px;min-height:1em}
 .note{color:var(--faint);margin-top:20px;font-size:11px;line-height:1.6}
 </style>
@@ -342,64 +365,241 @@ CONSOLE_PAGE = r"""<!doctype html>
 <title>{{SERVER_NAME}} — operator console</title>
 <style>
 :root{
-  --bg:#090b0c; --panel:#0e1113; --line:#20262b; --text:#d7dee5;
-  --dim:#6f7880; --faint:#3b434a; --accent:#e3b341; --accent-dim:#8a6d1f;
-  --ok:#7ee787; --bad:#ff7b72; --info:#79c0ff;
+  --bg:#0f1011;
+  --panel:#151719;
+  --panel-alt:#1a1c1f;
+  --line:#282b2f;
+  --line-faint:#1d2024;
+  --text:#dcd4c7;
+  --dim:#7e776c;
+  --faint:#47423b;
+  --accent:#d69339;
+  --accent-dim:#8b5e20;
+  --accent-glow:rgba(214,147,57,0.18);
+  --seal:#c43b2c;
+  --seal-dim:#5a1f18;
+  --seal-glow:rgba(196,59,44,0.25);
+  --ok:#6fa975;
+  --bad:#e05244;
+  --warn:#d69339;
+  --info:#6ea5c9;
   --mono:"Berkeley Mono","IBM Plex Mono","JetBrains Mono","SFMono-Regular","Cascadia Code",ui-monospace,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.015), transparent 18%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px),
-    var(--bg);
-  color:var(--text); font-family:var(--mono); font-size:13px; line-height:1.45;
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.6) 100%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0 1px, transparent 1px 3px);
+  color:var(--text);
+  font-family:var(--mono);
+  font-size:13px;
+  line-height:1.45;
   overflow:hidden;
+  text-shadow:0 0 1px rgba(220,212,199,0.35);
 }
 a{color:var(--info);text-decoration:none}
 a:hover{text-decoration:underline}
 button,input{font:inherit}
-#console{height:100vh;display:grid;grid-template-rows:auto 1fr auto}
-#topline{border-bottom:1px solid var(--line);background:var(--panel);padding:8px 12px;display:flex;align-items:center;gap:14px;white-space:nowrap;overflow:hidden}
-.sig{color:var(--accent);font-weight:700;letter-spacing:.02em}
+#console{height:100vh;display:grid;grid-template-rows:auto 1fr auto;position:relative}
+#console::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(ellipse at 50% 15%, transparent 60%, rgba(0,0,0,0.4) 100%);
+  z-index:10;
+}
+#topline{
+  border-bottom:1px solid var(--line);
+  background:var(--panel);
+  padding:8px 14px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  white-space:nowrap;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,0.5);
+  z-index:2;
+}
+.sig{color:var(--accent);font-weight:700;letter-spacing:.04em;text-shadow:0 0 8px var(--accent-glow)}
 .meta{color:var(--dim)}
 .meta b{color:var(--text);font-weight:500}
 .dot{color:var(--faint)}
 #clock{margin-left:auto;color:var(--dim)}
 #latency{color:var(--dim)}
-#lock{color:var(--dim);text-decoration:none;border:1px solid var(--line);padding:1px 7px}
-#lock:hover{color:var(--accent);border-color:var(--accent);text-decoration:none}
-#scrollback{overflow-y:auto;padding:18px 14px 26px;scrollbar-width:thin;scrollbar-color:var(--faint) transparent}
+#lock{
+  color:var(--dim);
+  text-decoration:none;
+  border:1px solid var(--line);
+  padding:2px 8px;
+  letter-spacing:0.04em;
+  font-size:12px;
+  transition:all 0.15s ease;
+}
+#lock:hover{color:var(--accent);border-color:var(--accent);box-shadow:0 0 6px var(--accent-glow);text-decoration:none}
+#scrollback{
+  overflow-y:auto;
+  padding:18px 16px 26px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--faint) transparent;
+  z-index:1;
+}
 .line{max-width:1180px;margin:0 auto}
 .entry{margin:0 0 14px}
-.cmdline{color:var(--accent);user-select:none;cursor:pointer}
-.cmdline:hover{color:#f0c65a}
+.cmdline{color:var(--accent);user-select:none;cursor:pointer;letter-spacing:0.02em}
+.cmdline:hover{color:#f0b25e;text-shadow:0 0 6px var(--accent-glow)}
 .out{margin:4px 0 0;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}
 .out .dim{color:var(--dim)}
 .out .ok{color:var(--ok)}
 .out .bad{color:var(--bad)}
-.out .warn{color:var(--accent)}
+.out .warn{color:var(--warn)}
 .out .info{color:var(--info)}
+.banner{
+  color:var(--dim);
+  font-size:11px;
+  line-height:1.2;
+  margin-bottom:12px;
+  user-select:none;
+  text-shadow:0 0 4px var(--accent-glow);
+}
+.banner b{color:var(--accent)}
 .table{display:table;border-collapse:collapse;margin:6px 0 2px;max-width:100%}
 .tr{display:table-row}
-.th,.td{display:table-cell;padding:2px 14px 2px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.th,.td{display:table-cell;padding:3px 14px 3px 0;border-bottom:1px solid var(--line-faint);vertical-align:top}
 .th{color:var(--dim);text-transform:uppercase;font-size:11px;letter-spacing:.08em}
 .td{white-space:pre-wrap;overflow-wrap:anywhere}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.btn{background:transparent;color:var(--text);border:1px solid var(--line);border-radius:0;padding:3px 8px;cursor:pointer;font-family:inherit;font-size:12px}
-.btn:hover{border-color:var(--accent-dim);color:var(--accent)}
-.btn.danger{color:var(--bad);border-color:#5a2422}
-.btn.danger:hover{border-color:var(--bad)}
-.btn.ok{color:var(--ok);border-color:#234d2c}
-.btn.ok:hover{border-color:var(--ok)}
-#prompt{border-top:1px solid var(--line);background:var(--panel);display:flex;align-items:center;gap:10px;padding:10px 12px}
-#ps1{color:var(--accent);white-space:nowrap;user-select:none}
-#input{flex:1;background:transparent;border:0;outline:0;color:var(--text);caret-color:var(--accent)}
+.btn{
+  background:transparent;
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:0;
+  padding:3px 9px;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:12px;
+  transition:all 0.15s ease;
+}
+.btn:hover{border-color:var(--accent-dim);color:var(--accent);box-shadow:0 0 6px var(--accent-glow)}
+.btn.danger{
+  color:var(--seal);
+  border:1px solid var(--seal-dim);
+}
+.btn.danger:hover{
+  border-color:var(--seal);
+  color:#ff8575;
+  box-shadow:0 0 8px var(--seal-glow);
+}
+.btn.ok{color:var(--ok);border-color:#2a442e}
+.btn.ok:hover{border-color:var(--ok);box-shadow:0 0 6px rgba(111,169,117,0.25)}
+
+/* Stamp (捺印) & Tegata (通行手形) motif */
+.stamp{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:2px double var(--seal);
+  padding:4px 10px;
+  color:var(--seal);
+  background:rgba(196,59,44,0.06);
+  font-size:12px;
+  letter-spacing:0.06em;
+  font-weight:700;
+  text-shadow:0 0 8px var(--seal-glow);
+  box-shadow:inset 0 0 6px var(--seal-glow);
+  margin-top:4px;
+}
+.btn.seal{
+  border:2px double var(--seal);
+  background:rgba(196,59,44,0.08);
+  color:var(--seal);
+  font-weight:700;
+  letter-spacing:0.06em;
+  padding:4px 12px;
+  text-shadow:0 0 8px var(--seal-glow);
+  box-shadow:inset 0 0 8px var(--seal-glow);
+}
+.btn.seal:hover{
+  background:rgba(196,59,44,0.2);
+  color:#ffa296;
+  border-color:#e05244;
+  box-shadow:0 0 12px var(--seal-glow), inset 0 0 10px var(--seal-glow);
+}
+
+.tegata-box{
+  border:1px solid var(--line);
+  background:var(--panel);
+  padding:12px 16px;
+  margin:6px 0;
+  max-width:620px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.03), 0 4px 12px rgba(0,0,0,0.4);
+  position:relative;
+}
+.tegata-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--line-faint);
+  padding-bottom:8px;
+  margin-bottom:10px;
+}
+.tegata-title{
+  color:var(--accent);
+  font-weight:700;
+  letter-spacing:0.08em;
+  font-size:12px;
+}
+.tegata-seal{
+  color:var(--seal);
+  font-weight:700;
+  border:1px solid var(--seal-dim);
+  padding:1px 6px;
+  font-size:11px;
+  letter-spacing:0.1em;
+}
+.tegata-field{
+  display:flex;
+  gap:12px;
+  margin:4px 0;
+  font-size:12px;
+}
+.tegata-k{color:var(--dim);min-width:70px;text-transform:uppercase;font-size:11px;letter-spacing:0.06em}
+.tegata-v{color:var(--text);word-break:break-all}
+
+#prompt{
+  border-top:1px solid var(--line);
+  background:var(--panel);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.4);
+  z-index:2;
+}
+#ps1{color:var(--accent);white-space:nowrap;user-select:none;text-shadow:0 0 8px var(--accent-glow);font-weight:700}
+#input{
+  flex:1;
+  background:transparent;
+  border:0;
+  outline:0;
+  color:var(--text);
+  caret-color:var(--accent);
+  text-shadow:0 0 2px rgba(220,212,199,0.3);
+}
 #input::placeholder{color:var(--faint)}
 #hint{color:var(--faint);font-size:11px;white-space:nowrap}
-.cursor{display:inline-block;width:.62em;height:1.05em;background:var(--accent);vertical-align:-.16em;animation:blink 1s steps(1) infinite}
+.cursor{
+  display:inline-block;
+  width:.62em;
+  height:1.05em;
+  background:var(--accent);
+  vertical-align:-.16em;
+  animation:blink 1s steps(1) infinite;
+  box-shadow:0 0 6px var(--accent-glow);
+}
 @keyframes blink{50%{opacity:0}}
 @media (prefers-reduced-motion: reduce){.cursor{animation:none}}
 @media (max-width:760px){
@@ -408,21 +608,66 @@ button,input{font:inherit}
   #hint{display:none}
   #scrollback{padding:14px 10px 22px}
 }
-#palette{display:none;position:fixed;left:50%;top:18%;transform:translateX(-50%);width:min(560px,92vw);background:var(--panel);border:1px solid var(--line);box-shadow:0 16px 48px rgba(0,0,0,.55);z-index:50}
+#palette{
+  display:none;
+  position:fixed;
+  left:50%;top:18%;
+  transform:translateX(-50%);
+  width:min(580px,92vw);
+  background:var(--panel);
+  border:1px solid var(--line);
+  box-shadow:0 18px 48px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.5);
+  z-index:50;
+}
 #palette.open{display:block}
-#palette-input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line);outline:0;color:var(--text);padding:12px 14px;font-family:inherit;font-size:13px}
-#palette-list{max-height:320px;overflow-y:auto}
-.palette-item{padding:9px 14px;cursor:pointer;display:flex;gap:12px;align-items:baseline;border-bottom:1px solid rgba(32,38,43,.5)}
+#palette-input{
+  width:100%;
+  background:transparent;
+  border:0;
+  border-bottom:1px solid var(--line);
+  outline:0;
+  color:var(--text);
+  padding:12px 14px;
+  font-family:inherit;
+  font-size:13px;
+  box-shadow:inset 0 1px 4px rgba(0,0,0,0.3);
+}
+#palette-list{max-height:340px;overflow-y:auto}
+.palette-item{
+  padding:9px 14px;
+  cursor:pointer;
+  display:flex;
+  gap:12px;
+  align-items:baseline;
+  border-bottom:1px solid rgba(40,43,47,0.5);
+  transition:background 0.1s ease;
+}
 .palette-item:last-child{border-bottom:0}
-.palette-item .k{color:var(--accent);min-width:170px}
+.palette-item .k{color:var(--accent);min-width:180px}
 .palette-item .d{color:var(--dim);font-size:12px}
-.palette-item.active{background:rgba(227,179,65,.08)}
+.palette-item.active{background:rgba(214,147,57,0.12)}
 #cheatsheet{margin-top:6px;color:var(--faint);font-size:12px;line-height:1.7}
 #cheatsheet b{color:var(--dim);font-weight:500}
-.form-block{border:1px solid var(--line);padding:12px;margin-top:6px;max-width:520px}
+.form-block{
+  border:1px solid var(--line);
+  background:var(--panel);
+  padding:14px;
+  margin-top:6px;
+  max-width:540px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
 .form-block label{display:block;color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin:8px 0 3px}
-.form-block input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:6px 8px;font-family:inherit;font-size:13px;outline:0}
-.form-block input:focus{border-color:var(--accent-dim)}
+.form-block input{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--line);
+  color:var(--text);
+  padding:6px 8px;
+  font-family:inherit;
+  font-size:13px;
+  outline:0;
+}
+.form-block input:focus{border-color:var(--accent);box-shadow:0 0 6px var(--accent-glow)}
 .form-block .row{display:flex;gap:8px;margin-top:12px}
 </style>
 </head>
@@ -446,6 +691,15 @@ button,input{font:inherit}
     <div class="line">
       <div class="entry">
         <div class="out">
+<div class="banner">
+  ███████╗███████╗██╗  ██╗██╗███╗   ███╗ ██████╗ ██████╗ ██╗
+  ██╔════╝██╔════╝██║ ██╔╝██║████╗ ████║██╔═══██╗██╔══██╗██║
+  ███████╗█████╗  █████╔╝ ██║██╔████╔██║██║   ██║██████╔╝██║
+  ╚════██║██╔══╝  ██╔═██╗ ██║██║╚██╔╝██║██║   ██║██╔══██╗██║
+  ███████║███████╗██║  ██╗██║██║ ╚═╝ ██║╚██████╔╝██║  ██║██║
+  ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝
+  <b>関守</b> · checkpoint keeper for matrix homeservers
+</div>
 <span class="ok">sekimori online.</span> <span class="dim">Type <b style="color:var(--accent)">help</b> or press <b style="color:var(--accent)">ctrl-k</b> for the command palette.</span>
 
 <span class="dim">most used:</span>
@@ -639,12 +893,13 @@ const handlers = {
   async "user deactivate"(entry, args){
     const id = args[0];
     if(!id) return printError(entry, "usage: user deactivate <@id:server>");
-    printOut(entry, `${badge("armed","warn")} destructive action — click to proceed ` +
-      actions([{label:`confirm deactivate ${id}`,cmd:`confirm deactivate ${id}`,cls:"danger"}]));
+    printOut(entry, `<div class="stamp">【 捺印待機 : DEACTIVATION ARMED 】</div>\n` +
+      `<span class="dim">Destructive action against account:</span> <b>${esc(id)}</b>\n` +
+      actions([{label:`捺印確認: DEACTIVATE ${id}`,cmd:`confirm deactivate ${id}`,cls:"seal"}]));
     handlers[`confirm deactivate ${id}`] = async (e2) => {
       const d = await api(`/api/users/${encodeURIComponent(id)}/deactivate`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({erase:false})});
       if(d.error) return printError(e2, d.error);
-      printOut(e2, `${badge("deactivated","ok")} ${esc(id)}`);
+      printOut(e2, `<div class="stamp">【 執行済 : ACCOUNT DEACTIVATED 】</div> <b>${esc(id)}</b>`);
       delete handlers[`confirm deactivate ${id}`];
     };
   },
@@ -676,18 +931,37 @@ const handlers = {
     const d = await api("/api/tokens", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({uses_allowed: uses})});
     if(d.error) return printError(entry, d.error);
     const link = d.registration_url || "";
-    printOut(entry, `${badge("created","ok")} <b>${esc(d.token)}</b> <span class="dim">(${uses} use${uses>1?"s":""})</span>\n<span class="dim">register link (click to copy):</span> <a href="#" data-copy="${esc(link)}">${esc(link)}</a>`);
+    printOut(entry, `
+<div class="tegata-box">
+  <div class="tegata-head">
+    <span class="tegata-title">関守 · 通行手形 (REGISTRATION PASS)</span>
+    <span class="tegata-seal">認 (APPROVED)</span>
+  </div>
+  <div class="tegata-field">
+    <span class="tegata-k">TOKEN:</span>
+    <span class="tegata-v"><b>${esc(d.token)}</b></span>
+  </div>
+  <div class="tegata-field">
+    <span class="tegata-k">ENTRIES:</span>
+    <span class="tegata-v">${uses} use${uses > 1 ? "s" : ""}</span>
+  </div>
+  <div class="tegata-field">
+    <span class="tegata-k">REGISTER:</span>
+    <span class="tegata-v"><a href="#" data-copy="${esc(link)}">${esc(link)}</a> <span class="dim">(click to copy)</span></span>
+  </div>
+</div>`);
   },
   async "token del"(entry, args){
     const token = args[0];
     if(!token) return printError(entry, "usage: token del <token> — or token del --all");
     if(token === "--all"){
-      printOut(entry, `${badge("armed","warn")} deletes EVERY registration token — click to proceed ` +
-        actions([{label:"confirm delete ALL tokens",cmd:"confirm token del --all",cls:"danger"}]));
+      printOut(entry, `<div class="stamp">【 捺印待機 : PURGE ALL TOKENS 】</div>\n` +
+        `<span class="dim">Revoke every active registration token</span>\n` +
+        actions([{label:"捺印確認: REVOKE ALL TOKENS",cmd:"confirm token del --all",cls:"seal"}]));
       handlers["confirm token del --all"] = async (e2) => {
         const d = await api("/api/tokens/__all__", {method:"DELETE"});
         if(d.error) return printError(e2, d.error);
-        printOut(e2, `${badge("all tokens deleted","ok")} ${esc(d.deleted?.length ?? 0)} removed${d.failed?.length ? `, ${d.failed.length} failed` : ""}`);
+        printOut(e2, `<div class="stamp">【 執行済 : ALL TOKENS REVOKED 】</div> ${esc(d.deleted?.length ?? 0)} removed${d.failed?.length ? `, ${d.failed.length} failed` : ""}`);
         delete handlers["confirm token del --all"];
       };
       return;
@@ -737,12 +1011,13 @@ const handlers = {
   async "room purge"(entry, args){
     const room = args[0];
     if(!room) return printError(entry, "usage: room purge <!room:id>");
-    printOut(entry, `${badge("armed","warn")} destructive action — click to proceed ` +
-      actions([{label:`confirm purge ${room}`,cmd:`confirm purge ${room}`,cls:"danger"}]));
+    printOut(entry, `<div class="stamp">【 捺印待機 : ROOM PURGE ARMED 】</div>\n` +
+      `<span class="dim">Permanent purge of timeline & events for:</span> <b>${esc(room)}</b>\n` +
+      actions([{label:`捺印確認: PURGE ROOM`,cmd:`confirm purge ${room}`,cls:"seal"}]));
     handlers[`confirm purge ${room}`] = async (e2) => {
       const d = await api(`/api/rooms/${encodeURIComponent(room)}`, {method:"DELETE", headers:{"Content-Type":"application/json"}, body:JSON.stringify({purge:true, block:false})});
       if(d.error) return printError(e2, d.error);
-      printOut(e2, `${badge("purge scheduled","ok")} ${esc(JSON.stringify(d))}`);
+      printOut(e2, `<div class="stamp">【 執行済 : ROOM PURGED 】</div> ${esc(JSON.stringify(d))}`);
       delete handlers[`confirm purge ${room}`];
     };
   },
@@ -790,12 +1065,13 @@ const handlers = {
     const user = args[0];
     if(!user) return printError(entry, "usage: media quarantine <@user:server> — or media quarantine --all");
     if(user === "--all"){
-      printOut(entry, `${badge("armed","warn")} quarantines EVERY user's uploaded media — click to proceed ` +
-        actions([{label:"confirm quarantine ALL media",cmd:"confirm quarantine --all",cls:"danger"}]));
+      printOut(entry, `<div class="stamp">【 捺印待機 : QUARANTINE ALL MEDIA 】</div>\n` +
+        `<span class="dim">Quarantine EVERY user upload across the entire homeserver</span>\n` +
+        actions([{label:"捺印確認: QUARANTINE ALL MEDIA",cmd:"confirm quarantine --all",cls:"seal"}]));
       handlers["confirm quarantine --all"] = async (e2) => {
         const d = await api("/api/media/quarantine_all", {method:"POST"});
         if(d.error) return printError(e2, d.error);
-        printOut(e2, `${badge("all user media quarantined","ok")} ${esc(d.num_quarantined ?? 0)} items across ${esc(Object.keys(d.by_user || {}).length)} users`);
+        printOut(e2, `<div class="stamp">【 執行済 : ALL MEDIA QUARANTINED 】</div> ${esc(d.num_quarantined ?? 0)} items across ${esc(Object.keys(d.by_user || {}).length)} users`);
         delete handlers["confirm quarantine --all"];
       };
       return;
